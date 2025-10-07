@@ -1,0 +1,36 @@
+---
+title: "Paramiko: Parallel SSH Command Execution"
+lastUpdated: true
+---
+
+> Execute the same commands across multiple remote servers simultaneously using Python's Paramiko library and multithreading.
+
+## Setup and Connection
+
+Use `paramiko` for SSH connections and `threading` for parallel execution. The script handles key authentication and sets the host key policy automatically.
+
+```sh
+$ pip install paramiko
+```
+
+```python
+import time
+import paramiko
+import threading
+
+# Configuration
+uname = input("Username: ") or "root"
+_ENTER = "\n".encode("utf-8")
+
+ssh_client = paramiko.SSHClient()
+ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+private_key_path = input("Private Key Path: ")  # add your private key path
+private_key = paramiko.RSAKey.from_private_key_file(private_key_path)
+
+list_ip = [
+    # Example IP list (Current: 1 server)
+    "159.223.xxx.yyy",
+    # Uncomment and add more IPs here for parallel execution
+    # "www.xxx.yyy.zzz",
+]

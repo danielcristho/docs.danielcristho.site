@@ -61,31 +61,22 @@ h1 {
     --sl-text-5xl: 3.5rem;
 } */
 
-/* --- OVERRIDE FINAL SIDEBAR ALIGNMENT --- */
+/* Sidebar*/
 
-.sidebar a {
-    /* Menghapus padding kiri (indentasi) bawaan */
-    padding-left: 0 !important; 
-    /* Mengatur margin kiri ke nol */
+.sidebar a {    padding-left: 0 !important; 
     margin-left: 0 !important;
 }
 
-/* 2. Menargetkan elemen summary/kategori (Docker, Kubernetes) */
-/* Ini seringkali berupa elemen yang bisa dibuka/tutup */
 .sidebar-link-group > summary {
     padding-left: 0 !important;
     margin-left: 0 !important;
 }
 
-/* 3. Menargetkan elemen anak di dalam tautan */
-/* Ini adalah selector yang sangat spesifik dan kuat */
 .sidebar a > * {
-    /* Jika ada elemen <span> atau <div> di dalam tautan yang menciptakan jarak, kita targetkan juga */
     padding-left: 0 !important;
     margin-left: 0 !important;
 }
 
-/* Opsional: Jika ikon panah memiliki margin, kita hilangkan */
 .sidebar-link-group svg {
     margin-left: 0 !important;
 }

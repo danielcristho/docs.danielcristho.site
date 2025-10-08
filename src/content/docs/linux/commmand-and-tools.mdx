@@ -1,0 +1,91 @@
+---
+title: Collection of Commands & Tools
+lastUpdated: true
+---
+
+## Networking & Diagnostics
+
+### tcpdump
+
+#### Basic usage
+
+```sh
+$ sudo tcpdump -i wlp2s0 -n host danielcristho.site -v
+```
+
+`-i` stands for network interfaces, specified network interface to capture packets.
+
+`-n` stands for no name resolution, disables DNS. Showing IP Addr and ports instead.
+
+`-v` stands for verbose, enable verbose output. You can use -vv or -vvv for even more detailed output.
+
+**Testing**:
+
+```sh
+# Sends ICMP
+$ ping danielcristho.site -c 3
+
+# Sends HTTP(S)
+$ curl -v https://danielcristho.site
+```
+
+```sh 
+# client to server, my machine sends a SYN packet to server on port 443.
+
+192.168.1.9.36310 > 66.33.60.130.443: Flags [S], cksum 0x4083 (incorrect -> 0x7da7), seq 3719579190, win 64240, options [mss 1460,sackOK,TS val 1417971474 ecr 0,nop,wscale 7], length 0
+```
+
+```sh
+# server to client, the server response with SYN-ACK, this means the server is alive.
+
+66.33.60.130.443 > 192.168.1.9.36310: Flags [S.], cksum 0x7cb1 (correct), seq 638980850, ack 3719579191, win 65535, options [mss 1400,sackOK,TS val 1246853303 ecr 1417971474,nop,wscale 8], length 0
+```
+
+```sh
+#  my machine sending ICMP request. Then the destination "76.76.21.21" sends back an ICMP Reply to confirm it received the request.  
+
+11:28:34.370985 IP (tos 0x0, ttl 64, id 24767, offset 0, flags [DF], proto ICMP (1), length 84)
+192.168.1.9 > 76.76.21.21: ICMP echo request, id 6, seq 1, length 64 11:28:34.387254 IP (tos 0x0, ttl 249, id 24767, offset 0, flags [DF], proto ICMP (1), length 84)
+```
+
+#### Capture only HTTPS (port 443):
+
+```sh
+$ sudo tcpdump -i wlp2s0 -n port 443
+```
+
+#### More verbosity and timestamp:
+
+```sh
+$ sudo tcpdump -i wlp2s0 -n -tttt -vvv host danielcristho.site
+```
+
+#### Save to "pcap":
+
+```sh
+sudo tcpdump -i wlp2s0 -n host danielcristho.site -w capture.pcap
+```
+
+📝 **Notes**:
+
+`mss` -> Max Segment Size
+
+`sackOK` -> Selective Acknowledgement
+
+`wscale` -> TCP window scaling factor
+
+`0x47455420` -> the hexa code for "GET"
+
+`0x504f5354` -> the hexa code for "POST"
+
+### netcat (`nc`)
+
+### subfinder
+
+## Load & Performance Testing
+
+### ApacheBenc (`ab`)
+
+### wrk
+
+### locust

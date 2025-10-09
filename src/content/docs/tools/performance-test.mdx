@@ -101,7 +101,7 @@ running (0m30.7s), 00/10 VUs, 280 complete and 0 interrupted iterations
 default ✓ [======================================] 10 VUs  30s
 ```
 
-###
+### Add 
 
 ```
 export const options = {
@@ -113,16 +113,45 @@ export const options = {
 };
 ```
 
-```sh
+### Add Credentials (username and password)
+
+```js
 import http from 'k6/http'
 import { check, sleep } from 'k6'
 
 export default function () {
   const data = { username: 'username', password: 'password' }
-  let res = http.post('https://myapi.com/login/', data)
+  let res = http.post('https://<TARGET_DOMAIN>', data)
 
   check(res, { 'success login': (r) => r.status === 200 })
 
   sleep(0.3)
+}
+```
+
+### Testing Multiple Endpoints
+
+```js
+import http from 'k6/http';
+import { check } from 'k6';
+
+export default function () {
+  const responses = http.batch([
+    ['GET', 'https://<TARGET_DOMAIN_1>'],
+    [
+      'POST',
+      'https://<TARGET_DOMAIN_2>',
+      JSON.stringify({ username: 'username', password: 'password' }),
+      { headers: { 'Content-Type': 'application/json' } },
+    ],
+  ]);
+
+  // Validate multiple endpoint responses
+  check(responses[0], {
+    'GET request successful': (r) => r.status === 200,
+  });
+  check(responses[1], {
+    'POST login successful': (r) => r.status === 200,
+  });
 }
 ```

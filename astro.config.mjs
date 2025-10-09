@@ -36,6 +36,10 @@ export default defineConfig({
                     autogenerate: { directory: 'linux' },
                 },
                 {
+                    label: 'Tools',
+                    autogenerate: { directory: 'tools' },
+                },
+                {
                     label: 'Terminal',
                     autogenerate: { directory: 'terminal' },
                 }

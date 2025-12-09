@@ -2,15 +2,15 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import react from '@astrojs/react'; // Import React
-import starlightThemeFlexoki from 'starlight-theme-flexoki'
+// import starlightThemeFlexoki from 'starlight-theme-flexoki'
 
 
 // https://astro.build/config
 export default defineConfig({
     integrations: [
-        starlightThemeFlexoki({
-            accentColor: "magenta",
-        }),
+        // starlightThemeFlexoki({
+        //     accentColor: "green",
+        // }),
 
         starlight({
             title: "danielcristho's docs",

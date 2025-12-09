@@ -38,3 +38,36 @@ Remove all Docker networks:
 ```sh
 docker network rm $(docker network ls -q)
 ```
+
+### Docker Client Version too Old
+
+**Error Message:**
+
+```
+Error response from daemon: client version 1.42 is too old. Minimum supported API version is 1.44, please upgrade your client to a newer version
+```
+
+**Solution:**
+
+Update `daemon.json`:
+
+```sh
+sudo vim /etc/docker/daemon.json
+```
+
+```
+{
+  ...
+  "min-api-version": "1.32"
+}
+```
+
+```sh
+sudo systemctl restart docker
+```
+
+:::note
+Source: 
+
+[Stackoverflow: Sudden Docker error about "client API version"](https://stackoverflow.com/questions/79817033/sudden-docker-error-about-client-api-version)
+:::

@@ -1,0 +1,35 @@
+---
+title: CloudFlare
+lastUpdated: true
+---
+
+## Purge Cache 
+
+```sh 
+# purge_cache.sh 
+
+#!/bin/bash
+
+# Const
+CLOUDFLARE_ZONE_ID="YOUR_CLOUDFLARE_ZONE_ID"
+CLOUDFLARE_API_TOKEN="YOUR_CLOUDFLARE_API_TOKEN"
+
+if [[ -z "$CLOUDFLARE_ZONE_ID" || -z "$CLOUDFLARE_API_TOKEN" ]]; then
+  echo "CLOUDFLARE_ZONE_ID or CLOUDFLARE_API_TOKEN not set!"
+  exit 1
+fi
+
+echo "Purging Cloudflare cache..."
+# Purge Everything
+payload='{"purge_everything":true}'
+
+# Request to cf
+response=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache" \
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+    -H "Content-Type: application/json" \
+    --data "$payload")
+
+# Check response
+echo "Response from Cloudflare:"
+echo "$response"
+```

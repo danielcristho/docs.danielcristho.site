@@ -1,11 +1,15 @@
 ---
-title: Collection of K3S and K3D Configuration
+title: K3S and K3D
 lastUpdated: true
 ---
 
-## K3D: Create Cluster
+## K3D
+
+- Create Cluster
 
 ```yml
+# my-cluster.yaml
+
 apiVersion: k3d.io/v1alpha5
 kind: Simple
 metadata:
@@ -25,8 +29,8 @@ options:
       - server:*
 ```
 
-Create K3D cluster from **YAML** file:
-
+:::note
 ```yml 
 $ k3d create cluster --config  my-cluster.yaml
 ```
+:::

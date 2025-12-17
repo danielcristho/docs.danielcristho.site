@@ -1,5 +1,5 @@
 ---
-title: Collection of Docker Command
+title: Docker Commands
 lastUpdated: true
 ---
 
@@ -57,7 +57,9 @@ docker rmi $(docker images -f "dangling=true" -q)
 
 ---
 
-> 💡 **Tip:** Regularly pruning unused Docker resources can help prevent common errors and free up disk space:
+:::note
+Regularly pruning unused Docker resources can help prevent common errors and free up disk space:
+:::
 
 ```sh
 docker system prune -a --volumes --force

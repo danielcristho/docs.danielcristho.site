@@ -1,5 +1,5 @@
 ---
-title: Collection of Docker Compose Configuration
+title: Docker Compose Configuration
 lastUpdated: true
 ---
 
@@ -7,16 +7,19 @@ lastUpdated: true
 
 In Docker Compose, you can assign static IP addresses to your containers within a custom network. This ensures consistent communication between services, especially when specific IP addresses are required. [Docker Compose Network](https://docs.docker.com/reference/compose-file/networks/)
 
-> 💡 **Tip:**
-> Use a unique subnet (e.g., `172.99.0.0/24`) to avoid conflicts with existing networks. Verify active Docker networks by running:
->
-> ```sh
-> docker network ls
-> ```
+:::note
+Use a unique subnet (e.g., `172.99.0.0/24`) to avoid conflicts with existing networks. Verify active Docker networks by running:
+
+```sh
+docker network ls
+```
+:::
 
 ### Example with Static IPs
 
 ```yml
+# docker-compose.yml 
+
 version: '3.9'
 
 services:
@@ -69,6 +72,8 @@ Defining multiple subnets in a single Docker network allows you to:
 > **3.** Allocate different IP address spaces for legacy services vs dynamic ones.
 
 ```yml
+# docker-compose.yml
+
 version: '3.9'
 
 services:
@@ -108,6 +113,8 @@ This is useful when:
 > **3.** You’re mixing static and dynamic IPs in the same subnet.
 
 ```yml
+# docker-compose.yml
+
 version: '3.9'
 
 services:
@@ -143,6 +150,9 @@ networks:
 ### APP/Web Server
 
 ```yml
+
+# docker-compose.yml
+
 services:
 ...
   api:
@@ -159,9 +169,12 @@ services:
 ...
 ```
 
-### MySQL/MariaDB
+### MySQL
 
 ```yml
+
+# docker-compose.yml
+
 services:
 ...
   mysql:
@@ -176,6 +189,7 @@ services:
     ports:
       - "3306:3306"
     healthcheck:
+      # not best practices
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass"]
       interval: 30s
       timeout: 10s
@@ -183,10 +197,33 @@ services:
       start_period: 20s
 ...
 ```
+### MariaDB
+
+```yml
+# docker-compose.yml
+
+services:
+...
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 1m
+...
+```
 
 ### PostgreSQL
 
 ```yml
+# docker-compose.yml
+
 services:
 ...
   postgres:
@@ -211,6 +248,8 @@ services:
 ### Redis
 
 ```yml
+# docker-compose.yml
+
 services:
 ...
   redis:
@@ -228,10 +267,10 @@ services:
 ...
 ```
 
-> 💡 **Tips:**
-
+:::note
 - Use a **lightweight endpoint** (e.g., `/health`) instead of hitting the main routes.  
 - Configure **intervals and timeouts** (too frequent checks may overload the service).  
 - Add a **start period** for services that need warm-up time before they are ready.  
 - Ensure the healthcheck **matches real readiness**, not just process existence.  
 - Combine with **`depends_on: condition: service_healthy`** in Docker Compose to control startup order.  
+:::

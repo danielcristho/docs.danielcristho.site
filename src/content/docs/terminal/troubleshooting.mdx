@@ -1,0 +1,30 @@
+---
+title: Troubleshooting
+lastUpdated: true
+---
+
+## zsh: corrupt history file /home/yourname/.zsh_history
+
+**-** Backup
+
+```sh
+$ mv ~/.zsh_history ~/.zsh_history.bak
+```
+
+**-** Extract 
+
+```sh
+$ strings ~/.zsh_history.bak > ~/.zsh_history 
+```
+
+**-** Reload 
+
+```sh 
+$ fc -R ~/.zsh_history
+```
+
+**-** Cleanup old file 
+
+```sh
+$ rm ~/.zsh_history.bak
+```

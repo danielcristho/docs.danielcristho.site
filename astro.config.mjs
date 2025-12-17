@@ -32,6 +32,10 @@ export default defineConfig({
                     autogenerate: { directory: 'devops-and-automation' },
                 },
                 {
+                    label: 'Cloud',
+                    autogenerate: { directory: 'cloud' },
+                },
+                {
                     label: 'Linux',
                     autogenerate: { directory: 'linux' },
                 },

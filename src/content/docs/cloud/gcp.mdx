@@ -1,0 +1,143 @@
+---
+title: GCP
+lastUpdated: true
+---
+
+## GAE (Google App Engine)
+
+### Deploy Golang API
+
+```yml 
+# app.yml 
+
+runtime: go122
+env: standard
+instance_class: F1 # 256mb/600mhz
+service: apollo
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 3
+  min_idle_instances: 1
+  max_idle_instances: automatic
+  min_pending_latency: automatic
+  max_pending_latency: automatic
+  # max_idle_time_seconds: 300
+
+service_account: 'your_service_account'
+
+handlers:
+  - url: /.*
+    script: auto
+
+env_variables:
+  YOUR_ENV_HERE
+```
+
+### Deploy Laravel API to GAE
+
+```yml 
+# app.yml 
+
+runtime: php82
+env: standard
+instance_class: F2 # 512mb/1.2ghz
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 100
+  min_idle_instances: 0
+  max_idle_instances: 1
+  target_cpu_utilization: 0.8
+  max_concurrent_requests: 50
+  min_pending_latency: 200ms
+  max_pending_latency: 500ms
+
+service_account: "your_service_account"
+
+handlers:
+  - url: /(.*\.(ico|gif|png|jpg|css|js|svg|woff|woff2|ttf|eot|otf|map))$
+    static_files: public/\1
+    upload: public/.*\.(ico|gif|png|jpg|css|js|svg|woff|woff2|ttf|eot|otf|map)$
+    secure: always
+
+  - url: /.*
+    script: auto
+    secure: always
+
+env_variables:
+  APP_NAME: "Laravel"
+  APP_ENV: "production"
+  ...
+  LOG_CHANNEL: "stderr"
+  LOG_DEPRECATIONS_CHANNEL: "null"
+  LOG_LEVEL: "warning"
+  # LOG_PATH: '/tmp/laravel.log'
+  ...
+  BROADCAST_DRIVER: "log"
+  CACHE_DRIVER: "array"
+  FILESYSTEM_DISK: "gcs"
+  QUEUE_CONNECTION: "database"
+  SESSION_DRIVER: "file"
+  SESSION_LIFETIME: "120"
+  ...
+  WWWGROUP: 1000
+  WWWUSER: 1000
+  ...
+  APP_CONFIG_CACHE: "/tmp/config.php"
+  APP_PACKAGES_CACHE: "/tmp/packages.php"
+  APP_ROUTES_CACHE: "/tmp/routes.php"
+  APP_SERVICES_CACHE: "/tmp/services.php"
+  APP_STORAGE: "/tmp"
+  EXCEL_TEMP_PATH: "/tmp"
+  SESSION_FILES: "/tmp/sessions"
+  VIEW_COMPILED_PATH: "/tmp"
+  ...
+```
+
+:::note 
+Deploy: `gcloud app deploy --quiet`
+:::
+
+### Dispatch
+
+**-** Subdomain routing
+
+```yml 
+# dispatch.yml 
+
+dispatch:
+  - url: "api-a.example.net/*"
+    service: api-a
+
+  - url: "api-b.example.net/*"
+    service: api-b
+```
+
+:::note 
+Deploy: `gcloud app deploy dispatch.yaml`
+:::
+
+## GCS (Google Cloud Storage)
+
+- Upload files from directory:
+
+```sh
+gsutil -m rsync -r -d <YOUR_DIR>/ gs://$BUCKET_URL/
+```
+
+- Cache control:
+
+```sh 
+# Setting cache for HTML files
+gsutil -m setmeta -h "Cache-Control:public, max-age=600" gs://$BUCKET_URL/**/*.html
+
+# Setting cache for static assets
+gsutil -m setmeta -h "Cache-Control:public, max-age=31536000" gs://$BUCKET_URL/**/*.js
+gsutil -m setmeta -h "Cache-Control:public, max-age=31536000" gs://$BUCKET_URL/**/*.css
+gsutil -m setmeta -h "Cache-Control:public, max-age=31536000" gs://$BUCKET_URL/**/*.png
+gsutil -m setmeta -h "Cache-Control:public, max-age=31536000" gs://$BUCKET_URL/**/*.jpg
+gsutil -m setmeta -h "Cache-Control:public, max-age=31536000" gs://$BUCKET_URL/**/*.jpeg
+gsutil -m setmeta -h "Cache-Control:public, max-age=31536000" gs://$BUCKET_URL/**/*.webp
+gsutil -m setmeta -h "Cache-Control:public, max-age=31536000" gs://$BUCKET_URL/**/*.svg
+```

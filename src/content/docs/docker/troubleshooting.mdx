@@ -3,19 +3,9 @@ title: Troubleshooting
 lastUpdated: true
 ---
 
-## Common Docker Issues & Solutions
+## failed to solve: failed to compute cache key: failed to calculate checksum of ref moby...
 
-### Cache Key Checksum Error
-
-**Error Message:**
-
-```
-failed to solve: failed to compute cache key: failed to calculate checksum of ref moby::...
-```
-
-**Solution:**
-
-Clear the Docker build cache:
+**-** Clear the Docker build cache:
 
 ```sh
 docker builder prune -a --force
@@ -23,18 +13,16 @@ docker builder prune -a --force
 
 ---
 
-### Network Address Space Overlap
+## ERROR: Pool overlaps with other one on this address space when starting...
 
-**Error Message:**
-
-```
-ERROR: Pool overlaps with other one on this address space when starting...
-```
-
-**Solution:**
-
-Remove all Docker networks:
+**-** Remove all Docker unused networks:
 
 ```sh
 docker network rm $(docker network ls -q)
+```
+
+or 
+
+```sh 
+docker network prune
 ```

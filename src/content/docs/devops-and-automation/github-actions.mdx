@@ -1,9 +1,53 @@
 ---
-title: "GitHub Actions: Deploy Static Site to Cloudflare Pages"
+title: "GitHub Actions"
 lastUpdated: true
 ---
 
-## First Scenario
+## Access Server through GitHub Actions
+
+:::note
+Executes commands on a remote server via SSH from GitHub Actions. Useful for tasks like pulling the latest code, running scripts, or managing deployments.
+:::
+
+```yaml
+name: Access Server via GitHub Actions
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: SSH to server and running some commands.
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /var/www/my-project && git pull origin main
+            # Add another commands here
+```
+
+:::caution
+
+**-** Server must allow SSH connections with a valid key.
+
+**-** Set `SSH_HOST`, `SSH_USER`, `SSH_PRIVATE_KEY`, and `SSH_PORT` in GitHub Secrets.
+
+**-** Use [appleboy/ssh-action](https://github.com/appleboy/ssh-action) to execute commands on the server.
+:::
+
+## Deploy Static Site to Cloudflare Pages
+
+### First Scenario
 
 > Deploy directly from GitHub Actions to Cloudflare Pages and using [wrangler-action](https://github.com/cloudflare/wrangler-action) for authentication & deployment.
 
@@ -48,12 +92,12 @@ jobs:
             directory: "< dist_or_out>"
 ```
 
-### Requirements
-
+:::note
 - `CLOUDFLARE_API_TOKEN` & `CLOUDFLARE_ACCOUNT_ID`. See more here: [Cloudflare: GitHub Actions](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions)
 - Ensure pnpm or npm is installed in the workflow.
+:::
 
-## Another Scenario
+### Another Scenario
 
 > Deploys from a VPS/server that has a public IP, then uploads from the server to Cloudflare Pages. Useful for custom processing (e.g., caching, logs, pre-processing).
 
@@ -87,17 +131,19 @@ jobs:
             --project-name=frontend-pages
 ```
 
-> Note: Using `npx` or `pnpm dlx`.
+:::note
+Note: Using `npx` or `pnpm dlx`.
 
-### Requirements
+Requirements
 
 - Requires `wrangler` CLI on the server. Follow this step to install wrangler: [Install/Update Wrangler
 ](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
 - Using [appleboy/ssh-action](https://github.com/appleboy/ssh-action) for SSH access (SSH_HOST, SSH_USER, SSH_PRIVATE_KEY).
 - pnpm/npm and Node.js are installed on the server.
 - `CLOUDFLARE_API_TOKEN` set in the server environment.
+:::
 
-### Workflow output
+#### Workflow output
 
 ```yml
 out: Uploading... (100/126)
@@ -108,3 +154,53 @@ out: ✨ Success! Uploaded 26 files (100 already uploaded) (1.92 sec)
 out: 🌎 Deploying...
 out: ✨ Deployment complete! Take a peek over at https://xxyyzz.pages.dev
 ```
+
+## Deploy Laravel API to AWS Lambda
+
+> This workflow automates the deployment of a Laravel API to [AWS Lambda](https://aws.amazon.com/lambda) using the [Serverless Framework](https://www.serverless.com). It installs necessary dependencies, sets up PHP, and runs `serverless deploy` to push the application to AWS Lambda.
+
+```yaml
+name: Deploy Laravel API to AWS Lambda
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.2
+
+    - name: Install dependencies
+      run: composer install
+
+    - name: Install Serverless Framework
+      run: npm install -g serverless
+
+    - name: Deploy to Lambda
+      run: serverless deploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: <your_best_region>
+```
+
+:::note
+- AWS Credentials: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` must be set as GitHub Secrets.
+- Serverless Framework: Installed in the workflow using `npm install -g serverless`.
+- Ensure you have created `serverless.yml` in the Laravel project. [Bref: Serverless Laravel - Getting started](https://bref.sh/docs/laravel/getting-started).
+- Using [shivammathur/setup-php](https://github.com/shivammathur/setup-php) to setup PHP in workflow.
+- Composer for installing Laravel dependencies.
+:::
+
+
+:::danger
+Store your sensitive keys, credentials, and secrets using GitHub Secrets.
+:::

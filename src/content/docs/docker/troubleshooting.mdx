@@ -27,17 +27,10 @@ or
 docker network prune
 ```
 
-### Docker Client Version too Old
+## Error response from daemon: client version 1.42 is too old. Minimum supported API version is 1.44, please upgrade your client to a newer version
 
-**Error Message:**
 
-```
-Error response from daemon: client version 1.42 is too old. Minimum supported API version is 1.44, please upgrade your client to a newer version
-```
-
-**Solution:**
-
-Update `daemon.json`:
+- Update `daemon.json`:
 
 ```sh
 sudo vim /etc/docker/daemon.json
